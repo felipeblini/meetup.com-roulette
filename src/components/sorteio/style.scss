@@ -1,0 +1,139 @@
+.app-sorteio {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-weight: normal;
+}
+
+input.input-lg {
+  border: solid 1px #ccc;
+  padding: 13px;
+  border-radius: 6px;
+  width: 50%;
+  font-size: 2rem;
+  outline: none;
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+input.edit-field {
+  border: solid 1px #ccc;
+  padding: 3px;
+  border-radius: 3px;
+  outline: none;
+}
+
+/* nav a,
+.options a {
+  display: inline-block;
+  padding: 10px 15px;
+}
+
+.options a {
+  border: solid #ccc;
+  border-radius: 6px;
+  text-decoration: none;
+} */
+
+ul {
+  border: solid 1px red;
+  list-style-type: none;
+  padding: 0;
+
+  li {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    border: solid;
+
+    &:nth-child(even) {
+      background: #efefef;
+    }
+
+    &:hover {
+      background: #d7f2e6;
+    }
+
+    div {
+      width: 25%;
+
+      &.member-nome {
+        padding: 10px;
+      }
+
+      &.member-photo {
+        img {
+          width: 80px;
+        }
+      }
+
+      &.member-actions {
+        text-align: right;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.danger,
+.edit,
+.cancel {
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 5px 10px;
+  outline: none;
+}
+.danger {
+  background: red;
+  border: solid 1px red;
+
+  &:hover {
+    background: darkred;
+    border: solid 1px darkred;
+  }
+}
+
+.edit {
+  background: #428bca;
+  border: solid 1px #3071a9;
+
+  &:hover {
+    background: #3071a9;
+    border: solid 1px #3071a9;
+  }
+}
+
+.cancel {
+  background: #efefef;
+  border: solid 1px #424141;
+  color: #333;
+
+  &:hover {
+    background: #e4e3e3;
+  }
+}
+
+a {
+  color: #42b983;
+}
+
+.loading {
+  padding: 50px;
+}
+
+.ml {
+  margin-left: 5px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.groupname {
+  display: flex;
+}
