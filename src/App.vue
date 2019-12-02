@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import MeetupSorteioComponent from "./components/MeetupSorteioComponent";
-
+import MeetupSorteioComponent from "@/components/sorteio/Index";
 export default {
   name: "app",
   components: {
@@ -14,11 +13,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-</style>

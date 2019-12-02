@@ -2,20 +2,25 @@ import axios from "axios";
 import jsonpAdapter from "axios-jsonp";
 import { apiurl } from "../config/constants";
 
-const getMembers = async () => {
+const getMembers = async groupName => {
+  console.log(`${apiurl}/${groupName}/members`);
   const members = await axios({
-    url: `${apiurl}/members`,
+    url: `${apiurl}/${groupName}/members`,
     adapter: jsonpAdapter
   });
 
   return members.data.data;
 };
 
-const getEventRSVP = eventId => {
-  return axios({
-    url: `${apiurl}/events/${eventId}/rsvps`,
+const getEventRSVP = async (groupName, eventId) => {
+  const participants = await axios({
+    url: `${apiurl}/${groupName}/events/${eventId}/rsvps`,
     adapter: jsonpAdapter
   });
+
+  return participants.data.data
+    .filter(p => p.response === "yes")
+    .map(p => p.member);
 };
 
 export default {
