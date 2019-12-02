@@ -3,7 +3,6 @@ import jsonpAdapter from "axios-jsonp";
 import { apiurl } from "../config/constants";
 
 const getMembers = async groupName => {
-  console.log(`${apiurl}/${groupName}/members`);
   const members = await axios({
     url: `${apiurl}/${groupName}/members`,
     adapter: jsonpAdapter
