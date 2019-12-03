@@ -158,13 +158,19 @@
           </li>
         </ul>
 
-        <img
-          v-if="vempraca"
-          class="img-vempraca"
-          width="308px"
-          src="@/assets/vempraca.jpg"
-          alt=""
-        />
+        <div v-if="vempraca" class="ganhador">
+          <h1>
+            MA OÊ
+          </h1>
+          <img
+            v-if="vempraca"
+            class="img-vempraca"
+            width="308px"
+            src="@/assets/silvio2.jpg"
+            alt=""
+          />
+          <h2>Vem pra cá {{ ganhador }}</h2>
+        </div>
       </div>
 
       <div class="d-flex">
@@ -219,7 +225,8 @@ export default {
       isAnError: false,
       groupFound: false,
       audio: new Audio(),
-      vempraca: false
+      vempraca: false,
+      ganhador: ""
     };
   },
   methods: {
@@ -373,6 +380,8 @@ export default {
         const pos = Math.round(_currentLeft / itemWidth);
         const q = leftToaddLater / gapEffect / _membersList.length;
 
+        this.ganhador = this.members[pos * -1].name.split(" ")[0];
+
         for (let i = 0; i < q; i++) {
           items.forEach(item => {
             item.style.left = pos * itemWidth + "px";
@@ -455,12 +464,29 @@ input.input-sm {
   outline: none;
 }
 
-.img-vempraca {
+.ganhador {
+  text-align: center;
   @media (min-width: 992px) {
-    margin-left: 168px;
+    padding-left: 168px;
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -4px;
+    font-size: 60px;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  h2 {
+    font-size: 40px;
+    margin-top: 10px;
+  }
+
+  .img-vempraca {
+    position: relative;
   }
 }
-
 ul {
   display: flex;
   flex-wrap: wrap;
