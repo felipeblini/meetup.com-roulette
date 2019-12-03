@@ -97,6 +97,12 @@
       />
 
       <div class="d-flex align-items-center">
+        <img
+          src="@/assets/jequiti.jpg"
+          alt=""
+          class="jequiti-logo"
+          v-if="showJequiti"
+        />
         <ul :class="{ 'draw-active': drawActive }">
           <li
             v-for="(member, index) in members"
@@ -200,6 +206,14 @@
       Done with <font-awesome-icon icon="heart" color="red" /> by the
       <a href="http://www.devpp.com.br" target="_blank">DevPP Community</a>
     </div>
+
+    <a
+      class="octacat"
+      href="https://github.com/felipeblini/meetup.com-roulette"
+      target="_blank"
+      rel="noopener noreferrer"
+      ><img src="@/assets/Octocat.png" alt=""
+    /></a>
   </div>
 </template>
 
@@ -226,7 +240,8 @@ export default {
       groupFound: false,
       audio: new Audio(),
       vempraca: false,
-      ganhador: ""
+      ganhador: "",
+      showJequiti: false
     };
   },
   methods: {
@@ -359,6 +374,14 @@ export default {
 
       let leftToaddLater = 0;
 
+      setInterval(() => {
+        this.showJequiti = true;
+
+        setTimeout(() => {
+          this.showJequiti = false;
+        }, 500);
+      }, 10000);
+
       const rodar = () => {
         items.forEach(item => {
           const itemsCurentLeft = Number(item.style.left.replace("px", ""));
@@ -380,7 +403,11 @@ export default {
         const pos = Math.round(_currentLeft / itemWidth);
         const q = leftToaddLater / gapEffect / _membersList.length;
 
-        this.ganhador = this.members[pos * -1].name.split(" ")[0];
+        try {
+          this.ganhador = this.members[pos * -1].name.split(" ")[0];
+        } catch (e) {
+          console.log({ e });
+        }
 
         for (let i = 0; i < q; i++) {
           items.forEach(item => {
@@ -443,6 +470,13 @@ export default {
   align-items: center;
 }
 
+.octacat {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+}
+
 h1 {
   font-weight: normal;
 }
@@ -487,6 +521,14 @@ input.input-sm {
     position: relative;
   }
 }
+
+.jequiti-logo {
+  position: absolute;
+  z-index: 1;
+  margin-left: 22px;
+  margin-top: 13px;
+}
+
 ul {
   display: flex;
   flex-wrap: wrap;
