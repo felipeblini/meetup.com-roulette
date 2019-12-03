@@ -406,7 +406,7 @@ export default {
         try {
           this.ganhador = this.members[pos * -1].name.split(" ")[0];
         } catch (e) {
-          console.log({ e });
+          this.ganhador = ''
         }
 
         for (let i = 0; i < q; i++) {
