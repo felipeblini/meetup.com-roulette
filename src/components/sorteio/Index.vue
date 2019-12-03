@@ -160,7 +160,7 @@
 
         <img
           v-if="vempraca"
-          class="ml-3"
+          class="img-vempraca"
           width="308px"
           src="@/assets/vempraca.jpg"
           alt=""
@@ -336,48 +336,66 @@ export default {
       this.vempraca = false;
     },
 
-    rodarRoleta() {
-      const items = document.querySelectorAll("li.draw-active");
-      const maxLeft = items.length * -239;
-      this.vempraca = false;
+    radomizeList() {
+      this.members = _membersList.sort(() => Math.random() - 0.5);
+    },
 
-      //TODO: baguncar a lista
+    rodarRoleta() {
+      this.radomizeList();
+      const items = document.querySelectorAll("li.draw-active");
+      const itemWidth = 239;
+      const maxLeft = items.length * -itemWidth;
+      this.vempraca = false;
+      const gapEffect = 100;
 
       this.audio.play();
 
       let leftToaddLater = 0;
 
-      const roulleteInterval = setInterval(() => {
+      const rodar = () => {
         items.forEach(item => {
           const itemsCurentLeft = Number(item.style.left.replace("px", ""));
 
-          // posicionar todos -239 a esquerda mais o gap (efeito)
-          _currentLeft = itemsCurentLeft - 239 - 100;
+          // posicionar todos -itemWidth a esquerda mais o gap (efeito)
+          _currentLeft = itemsCurentLeft - itemWidth - gapEffect;
 
           if (_currentLeft != 0 && _currentLeft <= maxLeft) {
             _currentLeft = 0;
           }
 
           item.style.left = _currentLeft + "px";
-          leftToaddLater += 100;
+          leftToaddLater += gapEffect;
         });
-      }, 100);
+      };
 
-      setTimeout(() => {
-        clearInterval(roulleteInterval);
-        const pos = Math.round(_currentLeft / 239);
-        const q = leftToaddLater / 100 / _membersList.length;
+      const parar = roulleteIntervalId => {
+        clearInterval(roulleteIntervalId);
+        const pos = Math.round(_currentLeft / itemWidth);
+        const q = leftToaddLater / gapEffect / _membersList.length;
 
         for (let i = 0; i < q; i++) {
           items.forEach(item => {
-            item.style.left = pos * 239 + "px";
+            item.style.left = pos * itemWidth + "px";
           });
         }
 
         setTimeout(() => {
           this.vempraca = true;
         }, 3000);
-      }, 20000);
+      };
+
+      const roulleteInterval100 = setInterval(() => rodar(), 100);
+
+      setTimeout(() => {
+        clearInterval(roulleteInterval100);
+        const roulleteInterval200 = setInterval(() => rodar(), 200);
+
+        setTimeout(() => {
+          clearInterval(roulleteInterval200);
+          const roulleteInterval300 = setInterval(() => rodar(), 300);
+          setTimeout(() => parar(roulleteInterval300), 5000);
+        }, 5000);
+      }, 10000);
     },
 
     reiniciar() {
@@ -437,6 +455,12 @@ input.input-sm {
   outline: none;
 }
 
+.img-vempraca {
+  @media (min-width: 992px) {
+    margin-left: 168px;
+  }
+}
+
 ul {
   display: flex;
   flex-wrap: wrap;
@@ -449,12 +473,26 @@ ul {
     flex-wrap: nowrap;
     justify-content: stretch;
 
-    border: solid 20px #ff3532;
+    border: solid 20px #fb152f;
     width: 350px;
     height: 350px;
     overflow: hidden;
     border-radius: 50%;
     background: rgb(14, 14, 43);
+
+    margin-top: 56px;
+
+    &::after {
+      content: "";
+      width: 600px;
+      height: 600px;
+      display: block;
+      position: absolute;
+      margin: -147px;
+      background: url("~@/assets/backg.jpg") no-repeat center;
+      z-index: -1;
+      border-radius: 50%;
+    }
   }
 
   li {
