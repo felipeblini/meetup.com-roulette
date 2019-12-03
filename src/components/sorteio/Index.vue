@@ -96,13 +96,17 @@
         v-if="!drawActive"
       />
 
-      <ul>
-        <li v-for="(member, index) in members" :key="index">
+      <ul :class="{ 'draw-active': drawActive }">
+        <li
+          v-for="(member, index) in members"
+          :key="index"
+          :class="{ 'draw-active': drawActive }"
+        >
           <div class="member-photo">
-            <img :src="member.photo" alt="" />
+            <img :src="member.profilePhoto" alt="" />
           </div>
 
-          <div class="member-nome">
+          <div class="member-nome mt-2">
             <template v-if="member.editando">
               <input
                 type="text"
@@ -145,7 +149,7 @@
             <button
               class="btn btn-danger ml-1"
               @click="excluir(member)"
-              v-if="!member.editando"
+              v-if="!member.editando && !drawActive"
             >
               <font-awesome-icon icon="trash" />
             </button>
@@ -156,15 +160,15 @@
       <a
         href="#"
         class="btn btn-outline p-5 btn-lg"
-        @click.prevent="reiniciar()"
+        @click.prevent="rodarRoleta()"
         v-if="drawActive"
       >
         <font-awesome-icon icon="undo-alt" />
-        Reiniciar
+        Rodar Roleta
       </a>
     </template>
 
-    <div class="text-center mt-5" v-if="!loading">
+    <div class="text-center my-5" v-if="!loading">
       Done with <font-awesome-icon icon="heart" color="red" /> by the
       <a href="http://www.devpp.com.br" target="_blank">DevPP Community</a>
     </div>
@@ -175,8 +179,8 @@
 import membersService from "@/services/memberService";
 
 let _membersList = [];
-const _emptyMemberPhoto =
-  "http://res.cloudinary.com/dwtuxv53y/image/upload/v1519940593/avatar_operqm.gif";
+
+let _currentLeft = 0;
 
 export default {
   name: "MeetupSorteio",
@@ -208,14 +212,9 @@ export default {
         );
       }
 
-      if (_membersList.length === 0 || _membersList.errors != undefined) {
+      if (_membersList.length === 0) {
         this.isAnError = true;
       } else {
-        _membersList.forEach(item => {
-          item.photo = item.photo ? item.photo.thumb_link : _emptyMemberPhoto;
-          item.profileLink = `https://www.meetup.com/${this.groupName}/members/${item.id}`;
-        });
-
         this.groupFound = true;
       }
 
@@ -246,6 +245,7 @@ export default {
 
     adicionar() {
       this.keyword = "";
+
       setTimeout(() => {
         const nome = prompt("Digite o nome");
         if (nome) {
@@ -307,21 +307,44 @@ export default {
 
     sortear() {
       this.drawActive = true;
-      this.members = _membersList;
+    },
 
-      const qntOfMembers = this.members.length;
-      const randomMember = () => {
-        let winnerPos = Math.round(Math.random() * qntOfMembers);
-        this.members = [_membersList[winnerPos]];
-      };
+    rodarRoleta() {
+      const items = document.querySelectorAll("li.draw-active");
+      const maxLeft = items.length * -239;
+      const currentItem = _currentLeft / -239;
 
-      const randomInterval = setInterval(function() {
-        randomMember();
-      }, 200);
+      console.log({ _currentLeft, maxLeft, currentItem });
+
+      //TODO: baguncar a lista
+
+      let leftToaddLater = 0;
+
+      const roulleteInterval = setInterval(() => {
+        items.forEach(item => {
+          const itemsCurentLeft = Number(item.style.left.replace("px", ""));
+          // posiciono todos -239 a esquerda mais o gap (efeito)
+          _currentLeft = itemsCurentLeft - 239 - 100;
+
+          if (_currentLeft != 0 && _currentLeft <= maxLeft) {
+            _currentLeft = 0;
+          }
+
+          item.style.left = _currentLeft + "px";
+          leftToaddLater += 100;
+        });
+      }, 100);
 
       setTimeout(() => {
-        clearInterval(randomInterval);
-        this.$forceUpdate();
+        clearInterval(roulleteInterval);
+        const pos = Math.round(_currentLeft / 239);
+        const q = leftToaddLater / 100 / _membersList.length;
+
+        for (let i = 0; i < q; i++) {
+          items.forEach(item => {
+            item.style.left = pos * 239 + "px";
+          });
+        }
       }, 5000);
     },
 
@@ -377,18 +400,6 @@ input.input-sm {
   outline: none;
 }
 
-/* nav a,
-.options a {
-  display: inline-block;
-  padding: 10px 15px;
-}
-
-.options a {
-  border: solid #ccc;
-  border-radius: 6px;
-  text-decoration: none;
-} */
-
 ul {
   display: flex;
   flex-wrap: wrap;
@@ -396,6 +407,18 @@ ul {
 
   list-style-type: none;
   padding: 0;
+
+  &.draw-active {
+    flex-wrap: nowrap;
+    justify-content: stretch;
+
+    border: solid 20px #ff3532;
+    width: 350px;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #2a1401;
+  }
 
   li {
     display: flex;
@@ -421,6 +444,36 @@ ul {
 
     div {
       padding: 5px;
+    }
+
+    &.draw-active {
+      margin: 0 2px;
+      min-width: 235px;
+      min-height: 301px;
+      position: relative;
+      top: 4px;
+      padding: 0;
+      border: none;
+      border: solid 5px white;
+
+      &:hover {
+        background: inherit;
+      }
+
+      &:nth-child(1) {
+        margin-left: 37px;
+      }
+
+      img {
+        border: solid 2px #fff;
+      }
+
+      .member-nome {
+        font-size: 23px;
+        text-align: center;
+        line-height: 23px;
+        margin-top: 24px !important;
+      }
     }
   }
 }

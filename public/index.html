@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-    <title>meetup-sorteio</title>
+    <title>Meetup Roullete</title>
 
     <style>
       body {
@@ -21,9 +21,13 @@
         margin-bottom: -15px;
       }
 
+      .app-header {
+        max-width: 350px;
+        margin: 30px auto;
+      }
+
       h1 {
         text-align: center;
-        padding: 40px;
       }
     </style>
   </head>
@@ -37,9 +41,15 @@
 
     <img src="./img/m_swarm_630x630.png" alt="" />
 
-    <h1>
-      Sorteio de Participantes do Meetup.com
-    </h1>
+    <div class="text-center app-header">
+      <h1>
+        Meetup Roullete
+      </h1>
+
+      <h5 class="text-muted">
+        Sorteie participantes de qualquer evento do Meetup.com
+      </h5>
+    </div>
 
     <div id="app"></div>
     <!-- built files will be auto injected -->
