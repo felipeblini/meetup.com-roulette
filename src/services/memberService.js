@@ -2,7 +2,7 @@ import axios from "axios";
 import jsonpAdapter from "axios-jsonp";
 import { apiurl, emptyMemberPhoto } from "../config/constants";
 
-const _formatResult = (result, groupName) =>
+const formatReturn = (result, groupName) =>
   result.map(item => ({
     ...item,
     profilePhoto: item.photo ? item.photo.thumb_link : emptyMemberPhoto,
@@ -17,28 +17,23 @@ const getMembers = async groupName => {
 
   const result =
     members.data.data.errors === undefined
-      ? _formatResult(members.data.data, groupName)
+      ? formatReturn(members.data.data, groupName)
       : () => [];
-
-  console.log({ result });
 
   return result;
 };
 
 const getEventRSVP = async (groupName, eventId) => {
-  const members = await axios({
+  let res = await axios({
     url: `${apiurl}/${groupName}/events/${eventId}/rsvps`,
     adapter: jsonpAdapter
   });
 
-  const result =
-    members.data.data.errors === undefined
-      ? _formatResult(members.data.data, groupName)
-      : () => [];
+  res = res.data.data;
 
-  console.log({ result });
+  if (res.errors) return [];
 
-  return result.filter(p => p.response === "yes").map(p => p.member);
+  return formatReturn(res.filter(p => p.response === "yes").map(p => p.member));
 };
 
 export default {

@@ -14,11 +14,15 @@
         -moz-osx-font-smoothing: grayscale;
       }
 
-      img {
-        margin: 30px auto;
-        width: 200px;
+      .logo-wrapper {
         display: flex;
-        margin-bottom: -15px;
+        max-width: 312px;
+        margin: 0 auto;
+        align-items: center;
+      }
+
+      .logo-wrapper > img {
+        width: 148px;
       }
 
       .app-header {
@@ -39,11 +43,14 @@
       >
     </noscript>
 
-    <img src="./img/m_swarm_630x630.png" alt="" />
+    <div class="logo-wrapper">
+      <img src="./img/m_swarm_630x630.png" alt="" />
+      <img src="./img/silvio.jpg" alt="" />
+    </div>
 
     <div class="text-center app-header">
       <h1>
-        Meetup Roullete
+        Silvio's Roullete
       </h1>
 
       <h5 class="text-muted">

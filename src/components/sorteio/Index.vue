@@ -50,7 +50,7 @@
       <a
         href="#"
         class="btn btn-link p-5 btn-lg ml-1"
-        @click.prevent="voltar()"
+        @click.prevent="voltarInicio()"
       >
         <font-awesome-icon icon="chevron-left" />
         Tentar novamente
@@ -65,7 +65,7 @@
         <a
           href="#"
           class="btn btn-link p-5 btn-lg ml-1"
-          @click.prevent="voltar()"
+          @click.prevent="voltarInicio()"
         >
           <font-awesome-icon icon="chevron-left" />
           Voltar
@@ -96,76 +96,98 @@
         v-if="!drawActive"
       />
 
-      <ul :class="{ 'draw-active': drawActive }">
-        <li
-          v-for="(member, index) in members"
-          :key="index"
-          :class="{ 'draw-active': drawActive }"
+      <div class="d-flex align-items-center">
+        <ul :class="{ 'draw-active': drawActive }">
+          <li
+            v-for="(member, index) in members"
+            :key="index"
+            :class="{ 'draw-active': drawActive }"
+          >
+            <div class="member-photo">
+              <img :src="member.profilePhoto" alt="" />
+            </div>
+
+            <div class="member-nome mt-2">
+              <template v-if="member.editando">
+                <input
+                  type="text"
+                  :ref="`editField-${member.id}`"
+                  class="input-sm"
+                  :value="member.name"
+                  @keyup.enter="salvarEdicao(member.id)"
+                />
+              </template>
+              <template v-else>
+                <a :href="member.profileLink" target="_blank">{{
+                  member.name
+                }}</a>
+              </template>
+            </div>
+
+            <div class="member-actions">
+              <button
+                class="btn btn-warning"
+                @click="cancelarEdicao(member.id)"
+                v-if="member.editando"
+              >
+                Cancelar
+              </button>
+
+              <button
+                class="btn btn-success ml-1"
+                @click="salvarEdicao(member.id)"
+                v-if="member.editando"
+              >
+                Salvar
+              </button>
+              <button
+                class="btn btn-info"
+                @click="editarMembro(member.id)"
+                v-else-if="!drawActive"
+              >
+                <font-awesome-icon icon="pen" />
+              </button>
+              <button
+                class="btn btn-danger ml-1"
+                @click="excluir(member)"
+                v-if="!member.editando && !drawActive"
+              >
+                <font-awesome-icon icon="trash" />
+              </button>
+            </div>
+          </li>
+        </ul>
+
+        <img
+          v-if="vempraca"
+          class="ml-3"
+          width="308px"
+          src="@/assets/vempraca.jpg"
+          alt=""
+        />
+      </div>
+
+      <div class="d-flex">
+        <a
+          href="#"
+          class="btn btn-outline p-5 btn-lg"
+          @click.prevent="voltarLista()"
+          v-if="drawActive"
         >
-          <div class="member-photo">
-            <img :src="member.profilePhoto" alt="" />
-          </div>
+          <font-awesome-icon icon="chevron-left" />
+          Voltar
+        </a>
 
-          <div class="member-nome mt-2">
-            <template v-if="member.editando">
-              <input
-                type="text"
-                :ref="`editField-${member.id}`"
-                class="input-sm"
-                :value="member.name"
-                @keyup.enter="salvarEdicao(member.id)"
-              />
-            </template>
-            <template v-else>
-              <a :href="member.profileLink" target="_blank">{{
-                member.name
-              }}</a>
-            </template>
-          </div>
-
-          <div class="member-actions">
-            <button
-              class="btn btn-warning"
-              @click="cancelarEdicao(member.id)"
-              v-if="member.editando"
-            >
-              Cancelar
-            </button>
-
-            <button
-              class="btn btn-success ml-1"
-              @click="salvarEdicao(member.id)"
-              v-if="member.editando"
-            >
-              Salvar
-            </button>
-            <button
-              class="btn btn-info"
-              @click="editarMembro(member.id)"
-              v-else-if="!drawActive"
-            >
-              <font-awesome-icon icon="pen" />
-            </button>
-            <button
-              class="btn btn-danger ml-1"
-              @click="excluir(member)"
-              v-if="!member.editando && !drawActive"
-            >
-              <font-awesome-icon icon="trash" />
-            </button>
-          </div>
-        </li>
-      </ul>
-
-      <a
-        href="#"
-        class="btn btn-outline p-5 btn-lg"
-        @click.prevent="rodarRoleta()"
-        v-if="drawActive"
-      >
-        <font-awesome-icon icon="undo-alt" />
-        Rodar Roleta
-      </a>
+        <a
+          href="#"
+          class="btn btn-outline p-5 btn-lg"
+          @click.prevent="rodarRoleta()"
+          v-if="drawActive"
+        >
+          <font-awesome-icon icon="undo-alt" />
+          Rodar Roleta
+        </a>
+      </div>
     </template>
 
     <div class="text-center my-5" v-if="!loading">
@@ -177,6 +199,7 @@
 
 <script>
 import membersService from "@/services/memberService";
+import peaodobauAudio from "@/assets/piao-do-bau-com-musica.mp3";
 
 let _membersList = [];
 
@@ -194,7 +217,9 @@ export default {
       eventIdInput: "",
       drawActive: false,
       isAnError: false,
-      groupFound: false
+      groupFound: false,
+      audio: new Audio(),
+      vempraca: false
     };
   },
   methods: {
@@ -306,24 +331,27 @@ export default {
     },
 
     sortear() {
+      this.audio = new Audio(peaodobauAudio);
       this.drawActive = true;
+      this.vempraca = false;
     },
 
     rodarRoleta() {
       const items = document.querySelectorAll("li.draw-active");
       const maxLeft = items.length * -239;
-      const currentItem = _currentLeft / -239;
-
-      console.log({ _currentLeft, maxLeft, currentItem });
+      this.vempraca = false;
 
       //TODO: baguncar a lista
+
+      this.audio.play();
 
       let leftToaddLater = 0;
 
       const roulleteInterval = setInterval(() => {
         items.forEach(item => {
           const itemsCurentLeft = Number(item.style.left.replace("px", ""));
-          // posiciono todos -239 a esquerda mais o gap (efeito)
+
+          // posicionar todos -239 a esquerda mais o gap (efeito)
           _currentLeft = itemsCurentLeft - 239 - 100;
 
           if (_currentLeft != 0 && _currentLeft <= maxLeft) {
@@ -345,7 +373,11 @@ export default {
             item.style.left = pos * 239 + "px";
           });
         }
-      }, 5000);
+
+        setTimeout(() => {
+          this.vempraca = true;
+        }, 3000);
+      }, 20000);
     },
 
     reiniciar() {
@@ -354,7 +386,12 @@ export default {
       this.keyword = "";
     },
 
-    voltar() {
+    voltarLista() {
+      this.drawActive = false;
+      this.vempraca = false;
+    },
+
+    voltarInicio() {
       this.groupName = "";
       this.meetupId = "";
       this.isAnError = false;
@@ -417,7 +454,7 @@ ul {
     height: 350px;
     overflow: hidden;
     border-radius: 50%;
-    background: #2a1401;
+    background: rgb(14, 14, 43);
   }
 
   li {
