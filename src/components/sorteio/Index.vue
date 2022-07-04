@@ -203,7 +203,7 @@
     </template>
 
     <div class="text-center my-5" v-if="!loading">
-      Done with <font-awesome-icon icon="heart" color="red" /> by the
+      Made with <font-awesome-icon icon="heart" color="red" /> by
       <a href="http://www.devpp.com.br" target="_blank">DevPP Community</a>
     </div>
 
@@ -406,7 +406,7 @@ export default {
         try {
           this.ganhador = this.members[pos * -1].name.split(" ")[0];
         } catch (e) {
-          this.ganhador = ''
+          this.ganhador = "";
         }
 
         for (let i = 0; i < q; i++) {
